@@ -1,0 +1,30 @@
+---
+# "App of apps" root Application.
+# Apply this ONE manifest with `kubectl apply -n argocd -f clusters/local/apps.yaml`
+# and Argo CD will discover every child Application in
+# infrastructure/argocd/applications/apps/ and create them automatically.
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: apps
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/REPLACE-ME/cisc814-k8s-lab.git
+    targetRevision: main
+    path: infrastructure/argocd/applications/apps
+    directory:
+      recurse: false
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ApplyOutOfSyncOnly=true

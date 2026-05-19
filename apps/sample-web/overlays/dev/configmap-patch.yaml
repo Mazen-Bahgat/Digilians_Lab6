@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sample-web-content
+data:
+  index.html: |
+    <!doctype html>
+    <html>
+      <head><title>sample-web - DEV</title></head>
+      <body style="font-family: system-ui; padding: 2rem; background: #eef6ff;">
+        <h1>CISC 814 - sample-web - DEV environment</h1>
+        <p>This is the <strong>dev</strong> overlay. One replica.
+        Background tinted blue.</p>
+        <p>Patched by <code>apps/sample-web/overlays/dev/configmap-patch.yaml</code>.</p>
+      </body>
+    </html>

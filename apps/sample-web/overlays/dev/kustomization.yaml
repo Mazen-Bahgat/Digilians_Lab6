@@ -1,0 +1,28 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: sample-web-dev
+
+commonLabels:
+  environment: dev
+
+resources:
+  - namespace.yaml
+  - ../../base
+
+patches:
+  - path: replicas-patch.yaml
+    target:
+      kind: Deployment
+      name: sample-web
+  - path: configmap-patch.yaml
+    target:
+      kind: ConfigMap
+      name: sample-web-content
+  - target:
+      kind: Ingress
+      name: sample-web
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: sample-web-dev.localtest.me

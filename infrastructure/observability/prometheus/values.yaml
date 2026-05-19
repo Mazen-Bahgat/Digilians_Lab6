@@ -1,0 +1,57 @@
+# Helm values for the community Prometheus chart on a student laptop.
+# Chart: prometheus-community/prometheus
+# Docs:  https://github.com/prometheus-community/helm-charts/tree/main/charts/prometheus
+
+server:
+  # Modest retention for a laptop. Increase to 15d in real environments.
+  retention: "2d"
+  persistentVolume:
+    # k3d/Docker-Desktop have a local-path provisioner; 4Gi is plenty for the lab.
+    enabled: true
+    size: 4Gi
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 768Mi
+  service:
+    type: ClusterIP
+
+alertmanager:
+  # Disable alertmanager entirely for the lab. The dashboards do not require it.
+  enabled: false
+
+prometheus-pushgateway:
+  # Not used in this lab.
+  enabled: false
+
+kube-state-metrics:
+  enabled: true
+  resources:
+    requests:
+      cpu: 25m
+      memory: 64Mi
+    limits:
+      cpu: 100m
+      memory: 192Mi
+
+prometheus-node-exporter:
+  enabled: true
+  resources:
+    requests:
+      cpu: 25m
+      memory: 32Mi
+    limits:
+      cpu: 100m
+      memory: 96Mi
+
+# The default scrape configs in this chart already include a `kubernetes-pods`
+# job that scrapes any Pod with prometheus.io/scrape="true" annotation. That is
+# what makes our podinfo deployment automatically appear in Prometheus targets.
+extraScrapeConfigs: |
+  # Example of an additional static target; safe to remove.
+  - job_name: 'prometheus-self'
+    static_configs:
+      - targets: ['localhost:9090']

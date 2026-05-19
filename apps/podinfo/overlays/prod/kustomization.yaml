@@ -1,0 +1,24 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: podinfo-prod
+
+commonLabels:
+  environment: prod
+
+resources:
+  - namespace.yaml
+  - ../../base
+
+patches:
+  - path: replicas-patch.yaml
+    target:
+      kind: Deployment
+      name: podinfo
+  - target:
+      kind: Ingress
+      name: podinfo
+    patch: |-
+      - op: replace
+        path: /spec/rules/0/host
+        value: podinfo-prod.localtest.me

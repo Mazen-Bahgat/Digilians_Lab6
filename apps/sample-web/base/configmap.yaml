@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sample-web-content
+  labels:
+    app: sample-web
+data:
+  index.html: |
+    <!doctype html>
+    <html>
+      <head><title>CISC 814 Lab 6 - sample-web</title></head>
+      <body style="font-family: system-ui; padding: 2rem;">
+        <h1>CISC 814 - sample-web (base, no overlay)</h1>
+        <p>If you can see this page, your Service is correctly routing
+        traffic to a Pod managed by the base Deployment.</p>
+        <p>Overlays will replace this text with environment-specific
+        content (dev or prod).</p>
+      </body>
+    </html>

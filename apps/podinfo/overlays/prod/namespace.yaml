@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: podinfo-prod
+  labels:
+    app.kubernetes.io/part-of: cisc814-lab
+    environment: prod

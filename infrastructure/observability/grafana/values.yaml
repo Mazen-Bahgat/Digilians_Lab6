@@ -1,0 +1,74 @@
+# Helm values for the official Grafana chart on a student laptop.
+# Chart: grafana/grafana
+# Docs:  https://github.com/grafana/helm-charts/tree/main/charts/grafana
+
+# Resource footprint kept small for laptops.
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: 300m
+    memory: 384Mi
+
+# Use a persistent volume so dashboards survive Pod restarts.
+persistence:
+  enabled: true
+  size: 2Gi
+
+service:
+  type: ClusterIP
+  port: 80
+
+# Default admin user is "admin"; the password is generated and stored in a Secret.
+# Retrieve it with:
+#   $pw = kubectl get secret -n monitoring grafana -o jsonpath="{.data.admin-password}"
+#   [System.Text.Encoding]::UTF8.GetString([System.Convert]::FromBase64String($pw))
+
+# Pre-wire the Prometheus data source so students do not have to configure it.
+datasources:
+  datasources.yaml:
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus-server.monitoring.svc.cluster.local
+        isDefault: true
+        editable: true
+
+# Auto-import two community dashboards by ID from grafana.com.
+# The sidecar approach keeps the values file small.
+dashboardProviders:
+  dashboardproviders.yaml:
+    apiVersion: 1
+    providers:
+      - name: 'cisc814'
+        orgId: 1
+        folder: 'CISC 814'
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/cisc814
+
+dashboards:
+  cisc814:
+    # Kubernetes / Compute Resources / Pod (CPU, memory, network per pod)
+    pod-resources:
+      gnetId: 6336
+      revision: 1
+      datasource: Prometheus
+    # Kubernetes / Views / Pods (status overview)
+    pods-overview:
+      gnetId: 15760
+      revision: 31
+      datasource: Prometheus
+    # Node Exporter Full (for the node-level view)
+    node-exporter-full:
+      gnetId: 1860
+      revision: 37
+      datasource: Prometheus
+
+# Plugins (none required, but you can add panel plugins here later).
+plugins: []

@@ -1,0 +1,26 @@
+apiVersion: ...    # which API version
+kind: ...          # what kind of resource (Deployment, Service, Namespace, ...)
+metadata:          # ← a container for identification fields
+  name: ...
+  namespace: ...
+  labels: { ... }
+  annotations: { ... }
+spec:              # ← the desired state, kind-specific
+  ...
+status:            # ← managed by the cluster, never written by you
+  ...
+
+# name --> the resource name, must be unique within a namespace
+# namespace --> the namespace in which the resource lives
+# labels --> key/value tags. Used by selectors elsewhere 
+# annotations --> key/value notes. Not used by selectors, but can be used by tools and libraries
+
+
+
+# the namespace wether it is the resoucrce itself or in the meta data to identify membership resources.
+
+# btw: 
+# we used
+/* Helm for installing existing third-party packages (Prometheus, Grafana, ingress controllers, databases, cert-manager, …).
+Kustomize for your own apps where you control the manifests.
+*/

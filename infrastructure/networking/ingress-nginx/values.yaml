@@ -1,0 +1,49 @@
+# Helm values for ingress-nginx on a student laptop.
+# Chart: ingress-nginx/ingress-nginx
+# Docs:  https://kubernetes.github.io/ingress-nginx/
+
+controller:
+  # Resource footprint kept small for laptops.
+  resources:
+    requests:
+      cpu: 50m
+      memory: 96Mi
+    limits:
+      cpu: 300m
+      memory: 256Mi
+
+  # Single replica is fine for a local cluster.
+  replicaCount: 1
+
+  # Expose the controller via a LoadBalancer service.
+  # On k3d, klipper-lb plus the cluster's --port flag publishes this on the host.
+  # On Docker Desktop, the built-in vpnkit publishes the LB Service on localhost
+  # directly. Either way, students reach the controller on:
+  #   http://<host>.localtest.me:8080
+  service:
+    type: LoadBalancer
+    ports:
+      http: 8080
+      https: 8443
+    targetPorts:
+      http: http
+      https: https
+    externalTrafficPolicy: Cluster
+
+  # Install our IngressClass and set it as the default so an Ingress without
+  # an explicit ingressClassName still routes through us.
+  ingressClassResource:
+    name: nginx
+    enabled: true
+    default: true
+  ingressClass: nginx
+
+  # Skip admission webhook in lab to avoid timing-sensitive Helm install failures
+  # on slow laptops. Re-enable in production.
+  admissionWebhooks:
+    enabled: false
+
+  # Faster status updates when Pods change.
+  watchIngressWithoutClass: false
+  publishService:
+    enabled: true

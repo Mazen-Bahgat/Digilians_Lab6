@@ -1,0 +1,18 @@
+# Editor / OS
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
+
+# Local kubectl / Helm state students might generate
+kubeconfig.yaml
+*.kubeconfig
+charts/
+*.tgz
+
+# Lab report drafts (students may keep these alongside the repo)
+report.pdf
+verification-output.txt
+*-dashboard.json
+screenshots/
